@@ -10,12 +10,10 @@ function smth(iterator, timeout) {
   const end = Date.now() + timeout;
 
   while (Date.now() < end) {
-    const { value } = iterator.next();
+    const value = iterator.next();
     console.log(value);
   }
 }
 
 const numGen = numGenerator(100);
 smth(numGen, 25);
-
-module.exports = { numGenerator, smth };
