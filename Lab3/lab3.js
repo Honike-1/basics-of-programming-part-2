@@ -3,7 +3,7 @@ function memoize(fn, options = {}) {
 
   const cache = new Map();
   function makeKey(args) {
-    JSON.stringify(args);
+    return JSON.stringify(args);
   }
 
   function LRU() {
@@ -12,8 +12,8 @@ function memoize(fn, options = {}) {
   }
 
   function LFU() {
-    const minFrequency = Infinity;
-    const LFUKey = null;
+    let minFrequency = Infinity;
+    let LFUKey = null;
 
     for (const [key, entry] of cache) {
       if (entry.freq < minFrequency) {
@@ -80,4 +80,40 @@ function memoize(fn, options = {}) {
   };
 }
 
-export { memoize };
+// testing
+
+function fib(n) {
+  if (n <= 2) {
+    return 1;
+  }
+  return fib(n - 2) + fib(n - 1);
+}
+
+const fibonacci1 = memoize(fib, { maxSize: 3, policy: "LRU" });
+
+console.log(fibonacci1(40));
+console.log(fibonacci1(41));
+console.log(fibonacci1(42));
+console.log(fibonacci1(42));
+console.log(fibonacci1(43));
+console.log(fibonacci1(40));
+
+const fibonacci2 = memoize(fib, { maxSize: 3, policy: "LFU" });
+
+console.log(fibonacci2(40));
+console.log(fibonacci2(41));
+console.log(fibonacci2(42));
+console.log(fibonacci2(40));
+console.log(fibonacci2(42));
+console.log(fibonacci2(43));
+console.log(fibonacci2(41));
+
+const fibonacci3 = memoize(fib, { maxSize: 3, policy: "timeout", time: 5000 });
+
+console.log(fibonacci3(40));
+console.log(fibonacci3(41));
+console.log(fibonacci3(42));
+console.log(fibonacci3(42));
+console.log(fibonacci3(43));
+console.log(fibonacci3(44));
+console.log(fibonacci3(41));
