@@ -33,7 +33,7 @@ function memoize(fn, options = {}) {
   }
 
   function eviction() {
-    if (cache.size <= maxSize) {
+    if (cache.size < maxSize) {
       return;
     }
 
@@ -43,6 +43,8 @@ function memoize(fn, options = {}) {
       LFU();
     } else if (policy === "timeout") {
       timeout();
+    } else if (typeof policy === "function") {
+      policy(cache);
     }
   }
 
@@ -69,13 +71,13 @@ function memoize(fn, options = {}) {
 
     const result = fn.apply(this, args);
 
+    eviction();
     cache.set(key, {
       value: result,
       freq: 1,
       addedAt: Date.now(),
     });
 
-    eviction();
     return result;
   };
 }
@@ -117,3 +119,17 @@ console.log(fibonacci3(42));
 console.log(fibonacci3(43));
 console.log(fibonacci3(44));
 console.log(fibonacci3(41));
+
+function custom(cache) {
+  const keys = [...cache.keys()];
+  cache.delete(keys[keys.length - 1]);
+}
+
+const fibonacci4 = memoize(fib, { maxSize: 3, policy: custom });
+
+console.log(fibonacci4(40));
+console.log(fibonacci4(41));
+console.log(fibonacci4(42));
+console.log(fibonacci4(42));
+console.log(fibonacci4(43));
+console.log(fibonacci4(42));
