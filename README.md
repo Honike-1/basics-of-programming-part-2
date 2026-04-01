@@ -1,1 +1,1 @@
-This is README file for this repository
+Labs for basics of programming part 2
