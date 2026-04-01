@@ -17,6 +17,7 @@ class BiPriorityQueue:
         heapq.heappush(self.max_heap, (-priority, pos))
         heapq.heappush(self.min_heap, (priority, pos))
         self.order.append(pos)
+        self.counter += 1
         
     def _cleanup(self, option):
         if option == "highest":
@@ -63,3 +64,25 @@ class BiPriorityQueue:
             return 0
         
         raise IndexError("No elements to delete")
+    
+    
+q = BiPriorityQueue()
+q.enqueue(25, 3)
+q.enqueue(34, 5)
+q.enqueue(67, 8)
+q.enqueue(52, 7)
+q.enqueue(96, 12)
+q.enqueue(84, 15)
+q.enqueue(78, 14)
+q.enqueue(64, 18)
+
+print(q.peek("highest"))
+print(q.peek("oldest"))
+print(q.peek("lowest"))
+
+q.dequeue("highest")
+q.dequeue("lowest")
+
+print(q.peek("highest"))
+print(q.peek("oldest"))
+print(q.peek("lowest"))
