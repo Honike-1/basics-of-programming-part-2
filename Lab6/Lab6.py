@@ -21,3 +21,21 @@ class DataStream:
         self.current += 1
         level = random.choice(self.levels)
         return {"id": self.current, "level": level}
+    
+async def process(data):
+    errors = 0
+    
+    async for record in data:
+        if record["level"] == "ERROR":
+            errors += 1
+            
+            if errors % 10000 == 0:
+                print(f"Found {errors} errors")
+    return errors
+
+async def main():
+    data = DataStream(records=1000000)
+    errors = await process(data)
+    print(f"Total errors found: {errors}")
+    
+asyncio.run(main())
