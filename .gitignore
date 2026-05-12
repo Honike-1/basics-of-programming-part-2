@@ -1,2 +1,4 @@
 node_modules/
 /lab5/smth123.js
+node_modules/dist/build
+Lab8/__pycache__
